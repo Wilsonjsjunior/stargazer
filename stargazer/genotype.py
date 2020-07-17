@@ -1,11 +1,26 @@
 import copy
-import sglib
 import subprocess
 import statistics
 import operator
 import os
 import logging
+
 from typing import Optional, Dict, List
+
+from .sglib import (
+    StarAllele,
+    SNPAllele,
+    VCFFile,
+    read_gene_table,
+    read_snp_table,
+    build_snpdb,
+    read_star_table,
+    build_stardb,
+    read_phenotype_table,
+    parse_vcf_fields,
+    vcf2biosamples,
+    sort_star_names,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -67,13 +82,13 @@ def ugt2b17(sample, stardb):
 def new_tandem(sv, star_names, stardb):
     stars = [stardb[x] for x in star_names]
     core = list(set([x for y in [z.core for z in stars] for x in y]))
-    tandem = sglib.StarAllele()
+    tandem = StarAllele()
     tandem.name, tandem.score, tandem.core, tandem.sv = '+'.join(star_names), sum([x.score for x in stars]), copy.deepcopy(core), sv
     return tandem
     
 def new_dup(sX, cnv):
     times = int(cnv.replace('cnv', ''))
-    dup = sglib.StarAllele()
+    dup = StarAllele()
     dup.name, dup.score, dup.core, dup.sv = sX.name + 'x' + str(times), sX.score * times, copy.deepcopy(sX.core), cnv
     return dup
 
@@ -506,7 +521,7 @@ def predict_phenotypes(biosamples, tg, pd):
         "==": operator.eq,
     }
 
-    phenotype_table = sglib.read_phenotype_table(f"{pd}/phenotype_table.txt")
+    phenotype_table = read_phenotype_table(f"{pd}/phenotype_table.txt")
 
     for biosample in biosamples:
         for pt in phenotype_table[tg]:
@@ -536,7 +551,7 @@ def assess_vcf(input_vcf):
     n_pp = 0 # partially phased
 
     for fields in input_vcf.data:
-        v = sglib.parse_vcf_fields(fields)
+        v = parse_vcf_fields(fields)
 
         # Raise an error if the GT field is not found in the FORMAT column.
         if 'GT' not in v['format']:
@@ -619,7 +634,7 @@ def process_vcf(input_vcf, vcf_sep, vcf_ad, tg, gb):
     ]
 
     for fields in input_vcf.data:
-        v = sglib.parse_vcf_fields(fields)
+        v = parse_vcf_fields(fields)
 
         # Filter problematic markers.
         if v['ref'] == 'I' or v['ref'] == 'D' or '.' in v['alt'] or 'D' in v['alt']:
@@ -749,7 +764,7 @@ def adjust_vcf(processed_vcf, stardb):
 
     for i in range(len(adjusted_vcf.data)):
         fields = adjusted_vcf.data[i]
-        v = sglib.parse_vcf_fields(fields)
+        v = parse_vcf_fields(fields)
         
         # Skip if the locus does not have any indels.
         if len(v['ref']) == 1 and all([len(x) == 1 for x in v['alt']]):
@@ -812,12 +827,12 @@ def conform_vcf(adjusted_vcf, ref_vcf, vcf_ad):
     conformed_vcf = adjusted_vcf.copy(["meta", "header"])
 
     for fields1 in adjusted_vcf.data:
-        v1 = sglib.parse_vcf_fields(fields1)
+        v1 = parse_vcf_fields(fields1)
         is_found = False
 
         for i in range(len(ref_vcf.data)):
             fields2 = ref_vcf.data[i]
-            v2 = sglib.parse_vcf_fields(fields2)
+            v2 = parse_vcf_fields(fields2)
 
             # Skip if CHROM or POS does not match.
             if v1['chrom'] != v2['chrom'] or v1['pos'] != v2['pos']:
@@ -826,7 +841,7 @@ def conform_vcf(adjusted_vcf, ref_vcf, vcf_ad):
             # If the only difference is REF, check the next line just in case.
             if v1['ref'] != v2['ref']:
                 fields3 = ref_vcf.data[i + 1]
-                v3 = sglib.parse_vcf_fields(fields3)
+                v3 = parse_vcf_fields(fields3)
                 if v1['pos'] == v3['pos'] and v1['ref'] == v3['ref']:
                     continue
                 else:
@@ -894,7 +909,7 @@ def phase_vcf(conformed_vcf, hap_panel, vcf_sep, vcf_ad, out, tr, pd, imp):
     # Temporarily remove the markers that can not be phased statistically.
     for i in reversed(range(len(phaseme_vcf.data))):
         fields = phaseme_vcf.data[i]
-        v = sglib.parse_vcf_fields(fields)
+        v = parse_vcf_fields(fields)
         if 'PS=C' in fields[7]:
             del phaseme_vcf.data[i]
 
@@ -907,7 +922,7 @@ def phase_vcf(conformed_vcf, hap_panel, vcf_sep, vcf_ad, out, tr, pd, imp):
 
         for i in range(len(combined_vcf.data)):
             fields = combined_vcf.data[i]
-            v = sglib.parse_vcf_fields(fields)
+            v = parse_vcf_fields(fields)
             if 'PS=C' not in fields[7]:
                 logger.warning('Only marker to be phased: %s' % v['pos'])
                 fields[7] = 'PS=D2'
@@ -934,14 +949,14 @@ def phase_vcf(conformed_vcf, hap_panel, vcf_sep, vcf_ad, out, tr, pd, imp):
 
     subprocess.call(['gunzip', f'{out}/phased.vcf.gz'])
 
-    phased_vcf = sglib.VCFFile(f'{out}/phased.vcf')
+    phased_vcf = VCFFile(f'{out}/phased.vcf')
     phased_vcf.read()
     phased_vcf.close()
 
     combined_vcf = conformed_vcf.copy(["meta", "header"])
 
     for fields1 in conformed_vcf.data:
-        v1 = sglib.parse_vcf_fields(fields1)
+        v1 = parse_vcf_fields(fields1)
 
         # Manually phase the loci where all the samples are homozygous.
         if 'PS=C' in fields1[7]:
@@ -955,7 +970,7 @@ def phase_vcf(conformed_vcf, hap_panel, vcf_sep, vcf_ad, out, tr, pd, imp):
         is_found = False
 
         for fields2 in phased_vcf.data:
-            v2 = sglib.parse_vcf_fields(fields2)
+            v2 = parse_vcf_fields(fields2)
             gt = lambda x: fields2[9:][x].split(':')[0]
             ad = lambda x: fields1[9:][x].split(':')[1]
             idx = list(range(len(fields1[9:])))
@@ -980,7 +995,7 @@ def annotate_vcf(combined_vcf, vcf_ad, dt, snpdb, gr):
     undetected_revertants = [x for x in snpdb if x.rv == 'revertant']
 
     for fields in annotated_vcf.data:
-        v = sglib.parse_vcf_fields(fields)
+        v = parse_vcf_fields(fields)
 
         vi_list = []
         rv_list = []
@@ -1058,7 +1073,7 @@ def account_vcf(annotated_vcf, vcf_ad):
     accounted_vcf = annotated_vcf.copy(["meta", "header", "data"])
 
     for fields in accounted_vcf.data:
-        v = sglib.parse_vcf_fields(fields)
+        v = parse_vcf_fields(fields)
 
         rv_list = [x for x in v['info'] if 'RV=' in x][0].replace('RV=', '').split(',')
         if 'revertant' not in rv_list:
@@ -1129,7 +1144,7 @@ def apply_pbe_algorithm(x, v, sample, stardb):
         if gt[i] == '0':
             continue
 
-        snp1 = sglib.SNPAllele()
+        snp1 = SNPAllele()
         snp1.pos = v['pos']
         snp1.wt = v['ref']
         snp1.var = v['alt'][int(gt[i]) - 1]
@@ -1187,9 +1202,9 @@ def apply_pbe_algorithm(x, v, sample, stardb):
 
 def extend_vcf(accounted_vcf, stardb):
     finalized_vcf = accounted_vcf.copy(["meta", "header", "data"])
-    pseudo_biosamples = sglib.vcf2biosamples(finalized_vcf, filter=True)
+    pseudo_biosamples = vcf2biosamples(finalized_vcf, filter=True)
     for fields in finalized_vcf.data:
-        v = sglib.parse_vcf_fields(fields)
+        v = parse_vcf_fields(fields)
         if 'PS=D' in v['info'][0]:
             continue
         new_data = []
@@ -1321,11 +1336,11 @@ def genotype(
     """
 
     pd = os.path.dirname(os.path.realpath(__file__))
-    gene_table = sglib.read_gene_table(f"{pd}/gene_table.txt")
-    snp_table = sglib.read_snp_table(f"{pd}/snp_table.txt", gene_table)
-    snpdb = sglib.build_snpdb(tg, gb, snp_table)
-    star_table = sglib.read_star_table(f"{pd}/star_table.txt")
-    stardb = sglib.build_stardb(tg, gb, star_table, snpdb)
+    gene_table = read_gene_table(f"{pd}/gene_table.txt")
+    snp_table = read_snp_table(f"{pd}/snp_table.txt", gene_table)
+    snpdb = build_snpdb(tg, gb, snp_table)
+    star_table = read_star_table(f"{pd}/star_table.txt")
+    stardb = build_stardb(tg, gb, star_table, snpdb)
     gr = gene_table[tg]
     tr = gene_table[tg][f"{gb}_region"].replace("chr", "")
 
@@ -1333,7 +1348,7 @@ def genotype(
     logger.info(f"Target region: chr{tr}")
 
     # Read the VCF file.
-    input_vcf = sglib.VCFFile(vcf)
+    input_vcf = VCFFile(vcf)
     input_vcf.read(tr, tidy=True)
     input_vcf.close()
 
@@ -1392,7 +1407,7 @@ def genotype(
         hap_panel = f"{pd}/1kgp/{gb}/{tg}.vcf.gz"
 
     # Read the reference VCF file.
-    ref_vcf = sglib.VCFFile(hap_panel)
+    ref_vcf = VCFFile(hap_panel)
     ref_vcf.read(tidy=True)
     ref_vcf.close()
 
@@ -1430,7 +1445,7 @@ def genotype(
     finalized_vcf = extend_vcf(accounted_vcf, stardb)
     finalized_vcf.to_file(f"{out}/finalized.vcf")
 
-    biosamples = sglib.vcf2biosamples(finalized_vcf, filter=False)
+    biosamples = vcf2biosamples(finalized_vcf, filter=False)
 
     if gdf:
         make_sv_calls(biosamples, tg, out, pd, cg, gdf, dt, cr, gb, sl)
@@ -1447,7 +1462,7 @@ def genotype(
 
         a = biosample.hap[0].cand[0].name
         b = biosample.hap[1].cand[0].name
-        should_flip = sglib.sort_star_names([a, b])[0] == b
+        should_flip = sort_star_names([a, b])[0] == b
 
         if should_flip:
             biosample.hap[0], biosample.hap[1] = (

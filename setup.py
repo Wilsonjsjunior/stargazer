@@ -7,7 +7,7 @@ setup(
     version=__version__,
     author='Seung-been "Steven" Lee',
     author_email="sbstevenlee@gmail.com",
-    description="A bioinformatics tool for calling star alleles",
+    description="A tool for calling star alleles from pharmacogenomic data",
     long_description=open("README.rst").read(),
     long_description_content_type="text/x-rst",
     packages=find_packages(),
