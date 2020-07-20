@@ -470,16 +470,17 @@ def remove_extra_s1(biosamples):
         f(biosample.hap[1].cand)
         f(biosample.dip_cand)
 
-def write_result_file(biosamples, out):
+def write_result_file(biosamples, out, tg):
     list2str = lambda x: '.' if not x else ','.join([str(x) for x in x])
 
     header = [
-        'name', 'status', 'hap1_main', 'hap2_main', 'hap1_cand', 'hap2_cand',
-        'hap1_score', 'hap2_score', 'dip_score', 'phenotype', 'dip_sv',
-        'hap1_sv', 'hap2_sv', 'ssr', 'dip_cand', 'hap1_main_core',
-        'hap2_main_core', 'hap1_main_tag', 'hap2_main_tag',
-        'hap1_af_mean_gene', 'hap2_af_mean_gene', 'hap1_af_mean_main',
-        'hap2_af_mean_main'
+        "gene", "name", "status", "hap1_main", "hap2_main", 
+        "hap1_cand", "hap2_cand",
+        "hap1_score", "hap2_score", "dip_score", "phenotype", "dip_sv",
+        "hap1_sv", "hap2_sv", "ssr", "dip_cand", "hap1_main_core",
+        "hap2_main_core", "hap1_main_tag", "hap2_main_tag",
+        "hap1_af_mean_gene", "hap2_af_mean_gene", "hap1_af_mean_main",
+        "hap2_af_mean_main"
     ]
 
     with open(f"{out}/genotype.txt", "w") as f:
@@ -487,6 +488,7 @@ def write_result_file(biosamples, out):
         for biosample in biosamples:
             fields = ['.' for x in header]
             status = 'g' if biosample.gt else 'ng'
+            fields[header.index("gene")] = tg
             fields[header.index('name')] = biosample.name
             fields[header.index('status')] = status
             if status == 'g': fields[header.index('hap1_main')] = biosample.hap[0].cand[0].name
@@ -1469,7 +1471,7 @@ def genotype(
                 biosample.hap[1], biosample.hap[0])
 
     predict_phenotypes(biosamples, tg, pd)
-    write_result_file(biosamples, out)
+    write_result_file(biosamples, out, tg)
 
     if gdf:
         plot_profiles(biosamples, out, pd, dp)
