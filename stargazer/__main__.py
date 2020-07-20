@@ -11,6 +11,13 @@ def get_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
+        "--version",
+        action="version",
+        version=f"Stargazer v{__version__}",
+        help="print the Stargazer version number and exit"
+    )
+
+    parser.add_argument(
         "dt",
         help="data type (wgs, ts, chip)"
     )

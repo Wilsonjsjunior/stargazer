@@ -1,6 +1,10 @@
 Changelog
 *********
 
+v1.1.1
+-------
+* Added ``version`` argument.
+
 v1.1.0
 -------
 
