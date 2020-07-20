@@ -76,8 +76,16 @@ To give::
 Running
 =======
 
-Move to the example directory. 
-Below uses VDR as the control gene for copy number (CN) analysis::
+Stargazer supports many different genotyping modes. In this section, we 
+will show some examples using real data. To do this, first move to the 
+example directory.
+
+Example 1
+---------
+
+Below will genotype 70 Coriell DNA samples for the CYP2D6 gene using their
+whole genome sequencing (WGS) data (taken from Lee et al., 2019). 
+The VDR gene will be used as the control gene for copy number (CN) analysis::
 
     $ stargazer \
       wgs \
