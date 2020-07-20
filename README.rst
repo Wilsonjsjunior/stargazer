@@ -178,8 +178,8 @@ Run with chip data::
       chip \
       hg19 \
       cyp3a5 \
-      rok-cyp3a5.vcf \
-      ex7-rok-cyp3a5
+      illumina-gsa-cyp3a5.vcf \
+      ex7-illumina-gsa-cyp3a5
 
 Example 8
 ---------
@@ -190,6 +190,6 @@ Run with imputation of ungenotyped markers::
       chip \
       hg19 \
       cyp3a5 \
-      rok-cyp3a5.vcf \
-      ex8-rok-cyp3a5 \
+      illumina-gsa-cyp3a5.vcf \
+      ex8-illumina-gsa-cyp3a5-imp \
       --imp
