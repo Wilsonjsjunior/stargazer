@@ -3,7 +3,9 @@ Stargazer
 
 Stargazer is a bioinformatics tool for calling star alleles (haplotypes) 
 in pharmacogenes (PGx genes) using data from next-generation 
-sequencing (NGS) or single nucleotide polymorphism (SNP) array.
+sequencing (NGS) or single nucleotide polymorphism (SNP) array. For more 
+information, please visit the official Stargazer webpage: 
+https://stargazer.gs.washington.edu/stargazerweb/.
 
 Stargazer is free for academic use, and commercial businesses wanting to 
 acquire Stargazer are required to contact license@uw.edu and to purchase a 
