@@ -59,74 +59,74 @@ Below uses VDR as the control gene for copy number (CN) analysis::
 
 You can provide a custom region as control::
 
-$ stargazer \
-  wgs \
-  hg19 \
-  cyp2d6 \
-  getrm-cyp2d6-vdr.joint.filtered.vcf \
-  ./ex2-getrm-cyp2d6-custom \
-  --gdf getrm-cyp2d6-vdr.gdf \
-  --cg chr22:42546883-42551883
+    $ stargazer \
+      wgs \
+      hg19 \
+      cyp2d6 \
+      getrm-cyp2d6-vdr.joint.filtered.vcf \
+      ./ex2-getrm-cyp2d6-custom \
+      --gdf getrm-cyp2d6-vdr.gdf \
+      --cg chr22:42546883-42551883
 
 Unlike whole genome sequencing data (WGS), target sequencing (TS) data 
 require inter-sample normalization for CN analysis. Below example uses 
 the population mean during inter-sample normalization::
 
-$ stargazer \
-  ts \
-  hg19 \
-  cyp2d6 \
-  hapmap-cyp2d6-vdr.joint.filtered.vcf \
-  ./ex3-hapmap-cyp2d6-vdr \
-  --gdf hapmap-cyp2d6-vdr.gdf \
-  --cg vdr
+    $ stargazer \
+      ts \
+      hg19 \
+      cyp2d6 \
+      hapmap-cyp2d6-vdr.joint.filtered.vcf \
+      ./ex3-hapmap-cyp2d6-vdr \
+      --gdf hapmap-cyp2d6-vdr.gdf \
+      --cg vdr
 
 You may indicate known reference samples without structural variation.
 Below uses the mean of indicated samples instead of the population mean::
 
-$ stargazer \
-  ts \
-  hg19 \
-  cyp2d6 \
-  hapmap-cyp2d6-vdr.joint.filtered.vcf \
-  ./ex4-hapmap-cyp2d6-vdr-list \
-  --gdf hapmap-cyp2d6-vdr.gdf \
-  --cg vdr \
+    $ stargazer \
+      ts \
+      hg19 \
+      cyp2d6 \
+      hapmap-cyp2d6-vdr.joint.filtered.vcf \
+      ./ex4-hapmap-cyp2d6-vdr-list \
+      --gdf hapmap-cyp2d6-vdr.gdf \
+      --cg vdr \
   --sl 133419 133420 133421 133423 133425
 
 Below runs in VCF only mode for hg19 data::
 
 $ stargazer \
-  wgs \
-  hg19 \
-  cyp3a5 \
-  getrm-cyp3a5-hg19.joint.filtered.vcf \
-  ex5-getrm-cyp3a5-vcfonly-hg19
+      wgs \
+      hg19 \
+      cyp3a5 \
+      getrm-cyp3a5-hg19.joint.filtered.vcf \
+      ex5-getrm-cyp3a5-vcfonly-hg19
 
 Run with hg38 data::
 
-$ stargazer \
-  wgs \
-  hg38 \
-  cyp3a5 \
-  getrm-cyp3a5-hg38.joint.filtered.vcf \
-  ex6-getrm-cyp3a5-vcfonly-hg38
+    $ stargazer \
+      wgs \
+      hg38 \
+      cyp3a5 \
+      getrm-cyp3a5-hg38.joint.filtered.vcf \
+      ex6-getrm-cyp3a5-vcfonly-hg38
 
 Run with chip data::
 
-$ stargazer \
-  chip \
-  hg19 \
-  cyp3a5 \
-  rok-cyp3a5.vcf \
-  ex7-rok-cyp3a5
+    $ stargazer \
+      chip \
+      hg19 \
+      cyp3a5 \
+      rok-cyp3a5.vcf \
+      ex7-rok-cyp3a5
 
 Run with imputation of ungenotyped markers::
 
-$ stargazer \
-  chip \
-  hg19 \
-  cyp3a5 \
-  rok-cyp3a5.vcf \
-  ex8-rok-cyp3a5 \
-  --imp
+    $ stargazer \
+      chip \
+      hg19 \
+      cyp3a5 \
+      rok-cyp3a5.vcf \
+      ex8-rok-cyp3a5 \
+      --imp
