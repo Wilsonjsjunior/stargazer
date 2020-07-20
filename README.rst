@@ -48,14 +48,14 @@ Running
 Move to the example directory. 
 Below uses VDR as the control gene for copy number (CN) analysis::
 
-$ stargazer \
-  wgs \
-  hg19 \
-  cyp2d6 \
-  getrm-cyp2d6-vdr.joint.filtered.vcf \
-  ./ex1-getrm-cyp2d6-vdr \
-  --gdf getrm-cyp2d6-vdr.gdf \
-  --cg vdr
+    $ stargazer \
+      wgs \
+      hg19 \
+      cyp2d6 \
+      getrm-cyp2d6-vdr.joint.filtered.vcf \
+      ./ex1-getrm-cyp2d6-vdr \
+      --gdf getrm-cyp2d6-vdr.gdf \
+      --cg vdr
 
 You can provide a custom region as control::
 
