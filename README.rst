@@ -32,7 +32,7 @@ and then enter::
 Check if Stargazer is successfully installed::
 
     $ stargazer -h
-    usage: stargazer [-h] [--cg STR] [--gdf FILE] [--ref FILE]
+    usage: stargazer [-h] [--version] [--cg STR] [--gdf FILE] [--ref FILE]
                      [--sl [STR [STR ...]]] [--dp] [--imp]
                      dt gb tg vcf out
 
@@ -45,6 +45,7 @@ Check if Stargazer is successfully installed::
 
     optional arguments:
       -h, --help            show this help message and exit
+      --version             print the Stargazer version number and exit
       --cg STR              control gene or region
       --gdf FILE            GDF file
       --ref FILE            reference VCF file
