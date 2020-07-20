@@ -11,6 +11,14 @@ commercial license agreement. To download Stargazer, please register
 first by following this 
 `link <https://stargazer.gs.washington.edu/stargazerweb/res/form.html>`_.
 
+Author
+======
+
+Stargazer was developed by Seung-been Lee (he goes by "Steven") during 
+his PhD in the Nickerson lab at the University of Washington. Steven 
+graduated in June of 2019 and now works in industry, but he's still in 
+charge of developing and maintaining Stargazer.
+
 Installation
 ============
 
@@ -92,11 +100,11 @@ Below uses the mean of indicated samples instead of the population mean::
       ./ex4-hapmap-cyp2d6-vdr-list \
       --gdf hapmap-cyp2d6-vdr.gdf \
       --cg vdr \
-  --sl 133419 133420 133421 133423 133425
+      --sl 133419 133420 133421 133423 133425
 
 Below runs in VCF only mode for hg19 data::
 
-$ stargazer \
+    $ stargazer \
       wgs \
       hg19 \
       cyp3a5 \
