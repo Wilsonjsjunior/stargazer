@@ -113,9 +113,11 @@ You can also provide a custom region as control::
 Example 3
 ---------
 
-Unlike with WGS data, the use of targeted sequencing (TS) data requires 
-inter-sample normalization for CN analysis. Below uses the population mean 
-during inter-sample normalization::
+Below will genotype 94 Coriell DNA samples for the CYP2D6 gene using their 
+targeted sequencing (TS) data (PGRNseq; taken from Lee et al., 2018). 
+Unlike with WGS data, the use of TS data requires inter-sample normalization 
+for CN analysis. In this example, the inter-sample normalization step 
+will use the population mean CN::
 
     $ stargazer \
       ts \
@@ -130,7 +132,8 @@ Example 4
 ---------
 
 You may indicate known reference samples without any structural variation.
-Below uses the mean of indicated samples instead of the population mean::
+Below will use the mean CN of indicated samples instead of the population 
+mean CN::
 
     $ stargazer \
       ts \
