@@ -96,7 +96,10 @@ The VDR gene will be used as the control gene for copy number (CN) analysis::
       --gdf getrm-cyp2d6-vdr.gdf \
       --cg vdr
 
-You can provide a custom region as control::
+Example 2
+---------
+
+You can also provide a custom region as control::
 
     $ stargazer \
       wgs \
@@ -107,9 +110,12 @@ You can provide a custom region as control::
       --gdf getrm-cyp2d6-vdr.gdf \
       --cg chr22:42546883-42551883
 
-Unlike whole genome sequencing data (WGS), target sequencing (TS) data 
-require inter-sample normalization for CN analysis. Below example uses 
-the population mean during inter-sample normalization::
+Example 3
+---------
+
+Unlike with WGS data, the use of targeted sequencing (TS) data requires 
+inter-sample normalization for CN analysis. Below uses the population mean 
+during inter-sample normalization::
 
     $ stargazer \
       ts \
@@ -120,7 +126,10 @@ the population mean during inter-sample normalization::
       --gdf hapmap-cyp2d6-vdr.gdf \
       --cg vdr
 
-You may indicate known reference samples without structural variation.
+Example 4
+---------
+
+You may indicate known reference samples without any structural variation.
 Below uses the mean of indicated samples instead of the population mean::
 
     $ stargazer \
@@ -133,7 +142,10 @@ Below uses the mean of indicated samples instead of the population mean::
       --cg vdr \
       --sl 133419 133420 133421 133423 133425
 
-Below runs in VCF only mode for hg19 data::
+Example 5
+---------
+
+Below runs Stargazer in VCF-only mode for hg19 data::
 
     $ stargazer \
       wgs \
@@ -141,6 +153,9 @@ Below runs in VCF only mode for hg19 data::
       cyp3a5 \
       getrm-cyp3a5-hg19.joint.filtered.vcf \
       ex5-getrm-cyp3a5-vcfonly-hg19
+
+Example 6
+---------
 
 Run with hg38 data::
 
@@ -151,6 +166,9 @@ Run with hg38 data::
       getrm-cyp3a5-hg38.joint.filtered.vcf \
       ex6-getrm-cyp3a5-vcfonly-hg38
 
+Example 7
+---------
+
 Run with chip data::
 
     $ stargazer \
@@ -159,6 +177,9 @@ Run with chip data::
       cyp3a5 \
       rok-cyp3a5.vcf \
       ex7-rok-cyp3a5
+
+Example 8
+---------
 
 Run with imputation of ungenotyped markers::
 
