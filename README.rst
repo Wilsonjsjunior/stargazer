@@ -21,6 +21,23 @@ his PhD in the Nickerson lab at the University of Washington. Steven
 graduated in June of 2019 and now works in industry, but he's still in 
 charge of developing and maintaining Stargazer.
 
+Citation
+========
+
+If you use Stargazer in a published analysis, please report the program 
+version and cite the appropriate article. The most recent reference for 
+Stargazer's genotyping algorithm is:
+
+Lee et al., 2019. Calling star alleles with Stargazer in 28 pharmacogenes 
+with whole genome sequences. Clinical Pharmacology & Therapeutics. 
+DOI: https://doi.org/10.1002/cpt.1552.
+
+The original genotyping pipeline using Stargazer is described in:
+
+Lee et al., 2018. Stargazer: a software tool for calling star alleles 
+from next-generation sequencing data using CYP2D6 as a model. 
+Genetics in Medicine. DOI: https://doi.org/10.1038/s41436-018-0054-0.
+
 Installation
 ============
 
@@ -29,9 +46,12 @@ and then enter::
 
     $ python setup.py install
 
-Check if Stargazer is successfully installed::
+Check if Stargazer is successfully installed by entering::
 
     $ stargazer -h
+
+To give::
+
     usage: stargazer [-h] [--version] [--cg STR] [--gdf FILE] [--ref FILE]
                      [--sl [STR [STR ...]]] [--dp] [--imp]
                      dt gb tg vcf out
