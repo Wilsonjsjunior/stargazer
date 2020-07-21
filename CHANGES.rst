@@ -1,6 +1,10 @@
 Changelog
 *********
 
+v1.1.3
+-------
+* Updated to add rs numbers to the input VCF if missing.
+
 v1.1.2
 -------
 * Added the column 'gene' to the genotype output file.

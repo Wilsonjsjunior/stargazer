@@ -990,11 +990,32 @@ def phase_vcf(conformed_vcf, hap_panel, vcf_sep, vcf_ad, out, tr, pd, imp):
 
     return combined_vcf
 
-def annotate_vcf(combined_vcf, vcf_ad, dt, snpdb, gr):
+def _annotate_vcf(combined_vcf, vcf_ad, dt, snpdb, gr):
+    """Add useful annotations to the VCF object.
 
+    For each variant, the following annotations will be added if possible:
+
+        1. Variant impact (vi)
+        2. Reverting variation (rv)
+        3. Sequence ontology (so)
+        4. Functional effect (fe)
+
+    If the input VCF file does not have rs numbers, this method will add 
+    those numbers as well.
+
+    Finally, for the sites that are homologous for the reference allele 
+    and therefore not included in the input VCF file, if Stargazer finds 
+    that some of those sites actually correspond to a variant allele, they 
+    will be added to the VCF object with the appropriate rv tag.
+
+    Returns:
+        VCFFile: New VCF object.
+    """
     annotated_vcf = combined_vcf.copy(["meta", "header", "data"])
 
-    undetected_revertants = [x for x in snpdb if x.rv == 'revertant']
+    # Get the list of all revertants. This list will be filtered later
+    # for unseen revertants which will be added to the VCF object.
+    rev = [x for x in snpdb if x.rv == "revertant"]
 
     for fields in annotated_vcf.data:
         v = parse_vcf_fields(fields)
@@ -1004,32 +1025,41 @@ def annotate_vcf(combined_vcf, vcf_ad, dt, snpdb, gr):
         so_list = []
         fe_list = []
 
-        for var in v['alt']:
-            filtered = [x for x in snpdb if v['pos'] == x.pos and v['ref'] == x.hg and (var == x.var or var == x.wt)]
+        for var in v["alt"]:
+            filtered = [x for x in snpdb 
+                if v["pos"] == x.pos 
+                    and v["ref"] == x.hg 
+                    and (var == x.var or var == x.wt)]
+
             if filtered:
                 vi = filtered[0].vi
                 rv = filtered[0].rv
                 so = filtered[0].so
                 fe = filtered[0].fe
-                undetected_revertants = [x for x in undetected_revertants if x != filtered[0]]
+
+                # Remove the filtered variant from the list of revertants.
+                rev = [x for x in rev if x != filtered[0]]
+
+                if fields[2] == "." and filtered[0].rs:
+                    fields[2] = filtered[0].rs
 
             else:
-                vi = 'unknown'
-                rv = 'unknown'
-                so = 'unknown'
-                fe = 'unknown'
+                vi = "unknown"
+                rv = "unknown"
+                so = "unknown"
+                fe = "unknown"
 
             vi_list.append(vi)
             rv_list.append(rv)
             so_list.append(so)
             fe_list.append(fe)
 
-        v['info'].append('VI=' + ','.join(vi_list))
-        v['info'].append('RV=' + ','.join(rv_list))
-        v['info'].append('SO=' + ','.join(so_list))
-        v['info'].append('FE=' + ','.join(fe_list))
+        v["info"].append("VI=" + ",".join(vi_list))
+        v["info"].append("RV=" + ",".join(rv_list))
+        v["info"].append("SO=" + ",".join(so_list))
+        v["info"].append("FE=" + ",".join(fe_list))
 
-        fields[7] = ';'.join(v['info'])
+        fields[7] = ";".join(v["info"])
 
     if dt == "chip":
         pass
@@ -1044,23 +1074,23 @@ def annotate_vcf(combined_vcf, vcf_ad, dt, snpdb, gr):
             dat = ["0|0" for x in annotated_vcf.header[9:]]
             fmt = "GT"
 
-        for snp in undetected_revertants:
-            inf = ';'.join([
-                'PS=D2',
-                f'VI={snp.vi}',
-                'RV=revertant',
-                f'SO={snp.so}',
-                f'FE={snp.fe}'
+        for snp in rev:
+            inf = ";".join([
+                "PS=D2",
+                f"VI={snp.vi}",
+                "RV=revertant",
+                f"SO={snp.so}",
+                f"FE={snp.fe}"
             ])
 
             fields = [
-                gr['chr'].replace("chr", ""),
+                gr["chr"].replace("chr", ""),
                 snp.pos,
                 snp.id,
                 snp.hg,
                 snp.wt,
-                '.',
-                '.',
+                ".",
+                ".",
                 inf,
                 fmt
             ] + dat
@@ -1438,7 +1468,7 @@ def genotype(
         combined_vcf = phase_vcf(conformed_vcf, hap_panel, vcf_sep, vcf_ad, out, tr, pd, imp)
 
     # Annotate the input VCF file for various properties.
-    annotated_vcf = annotate_vcf(combined_vcf, vcf_ad, dt, snpdb, gr)
+    annotated_vcf = _annotate_vcf(combined_vcf, vcf_ad, dt, snpdb, gr)
     
     # Change the reference sequence from hg19 (or hg38) to the WT allele.
     accounted_vcf = account_vcf(annotated_vcf, vcf_ad)

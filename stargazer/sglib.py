@@ -213,21 +213,40 @@ class VCFFile:
         return result
 
 class SNPAllele:
+    """ SNP allele object.
+
+    Attributes:
+       pos (str): Genomic coordinate.
+       wt (str): Wild-type allele (*1).
+       var (str): Variant allele compared to *1.
+       rs (str): rs number.
+       het (bool): True if heterozygous.
+       ad (int): Allelic depth.
+       td (int): Total read depth.
+       n (str): SNP table number.
+       hg (str): Reference allele in the assembly.
+       so (str): Sequence ontology.
+       fe (str): Function effect.
+       vi (str): Variant impact.
+       rv (str): Reverting variant.
+       gb (str): Genome build.
+
+    """
     def __init__(self):
-        self.pos = '' # reference genome position
-        self.wt = '' # wild type (*1) allele
-        self.var = '' # variant allele
-        self.rs = '' # rs ID
-        self.het = False # heterozygous
-        self.ad = 0 # allelic depth
-        self.td = 0 # total depth
-        self.n = '' # SNP table number
-        self.hg = '' # reference genome allele
-        self.so = '' # sequence ontology
-        self.fe = '' # functional effect
-        self.vi = '' # variant impact
-        self.rv = '' # reverting variant
-        self.gb = '' # genome build
+        self.pos = ''
+        self.wt = ''
+        self.var = ''
+        self.rs = ''
+        self.het = False
+        self.ad = 0
+        self.td = 0
+        self.n = ''
+        self.hg = ''
+        self.so = ''
+        self.fe = ''
+        self.vi = ''
+        self.rv = ''
+        self.gb = ''
         self.data = {}
 
     @property
@@ -670,7 +689,7 @@ def build_snpdb(
     for k, v in snp_table[tg].items():
         snpallele = SNPAllele()
         snpallele.n = k
-        snpallele.id = v['rs_id']
+        snpallele.rs = v['rs_id']
         snpallele.pos = v[f'{gb}_pos']
         snpallele.hg = v[f'{gb}_allele']
         snpallele.var = v['var_allele']
