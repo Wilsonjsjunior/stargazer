@@ -13,6 +13,16 @@ commercial license agreement. To download Stargazer, please register
 first by following this 
 `link <https://stargazer.gs.washington.edu/stargazerweb/res/form.html>`_.
 
+PyPGx
+=====
+
+If you already don’t have a pipeline for creating required input 
+files for Stargazer (VCF and GDF files), we strongly recommend 
+that you check PyPGx, a Python package for PGx research. PyPGx 
+offers various pipeline solutions fully compatible with Stargazer 
+and other useful analyses. For more information, please visit 
+PyPGx at https://github.com/pypgx/pypgx.
+
 Author
 ======
 
